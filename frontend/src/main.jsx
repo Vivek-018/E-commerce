@@ -1,16 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
-import { Provider } from "react-redux";
-import { store } from "./store/store.js";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { Provider, useDispatch, useSelector } from "react-redux";
+import  store  from "./store/store.js";
+import {
+  RouterProvider,
+  createBrowserRouter,
+  Navigate,
+} from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
 import Contact from "./pages/Contact.jsx";
 import About from "./pages/About.jsx";
-import Singup from "./pages/Singup.jsx";
-import Cart from "./components/Cart.jsx";
+import Signup from "./pages/Signup.jsx";
 import Product from "./pages/Product.jsx";
 import Productdetail from "./pages/Productdetail.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
@@ -23,6 +26,12 @@ import {
   UsersList,
 } from "./components/index.js";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
+import { fetchUser } from "./store/authSlice.js";
+
+const ProtectedRoute = ({ children }) => {
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
+};
 
 const router = createBrowserRouter([
   {
@@ -38,6 +47,10 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
+        path: "signup",
+        element: <Signup />,
+      },
+      {
         path: "contact",
         element: <Contact />,
       },
@@ -46,11 +59,7 @@ const router = createBrowserRouter([
         element: <About />,
       },
       {
-        path: "Signup",
-        element: <Singup />,
-      },
-      {
-        path: "Product",
+        path: "product",
         element: <Product />,
       },
       {
@@ -59,7 +68,11 @@ const router = createBrowserRouter([
       },
       {
         path: "dashboard",
-        element: <Dashboard />,
+        element: (
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        ),
         children: [
           {
             path: "overview",
@@ -81,7 +94,11 @@ const router = createBrowserRouter([
       },
       {
         path: "admin",
-        element: <AdminDashboard />,
+        element: (
+          <ProtectedRoute>
+            <AdminDashboard />
+          </ProtectedRoute>
+        ),
         children: [
           {
             path: "users",
@@ -97,10 +114,24 @@ const router = createBrowserRouter([
   },
 ]);
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <RouterProvider router={router} />
-    </Provider>
-  </React.StrictMode>
-);
+const AppContent = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchUser());
+  }, [dispatch]);
+
+  return <RouterProvider router={router} />;
+};
+
+const Root = () => {
+  return (
+    <React.StrictMode>
+      <Provider store={store}>
+        <AppContent />
+      </Provider>
+    </React.StrictMode>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<Root />);

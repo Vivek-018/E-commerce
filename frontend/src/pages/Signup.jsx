@@ -1,15 +1,15 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../store/authSlice';
+import { signup } from '../store/authSlice';
 
-const Login = () => {
+const Signup = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.auth);
 
   const onSubmit = (data) => {
-    dispatch(login(data));
+    dispatch(signup(data));
   };
 
   return (
@@ -17,11 +17,25 @@ const Login = () => {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
+            Create your account
           </h2>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label htmlFor="name" className="sr-only">
+                Name
+              </label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                {...register('name', { required: 'Name is required' })}
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Full Name"
+              />
+              {errors.name && <p className="mt-2 text-sm text-red-600">{errors.name.message}</p>}
+            </div>
             <div>
               <label htmlFor="email-address" className="sr-only">
                 Email address
@@ -38,7 +52,7 @@ const Login = () => {
                     message: 'Invalid email address',
                   }
                 })}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Email address"
               />
               {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>}
@@ -51,8 +65,14 @@ const Login = () => {
                 id="password"
                 name="password"
                 type="password"
-                autoComplete="current-password"
-                {...register('password', { required: 'Password is required' })}
+                autoComplete="new-password"
+                {...register('password', {
+                  required: 'Password is required',
+                  minLength: {
+                    value: 8,
+                    message: 'Password must be at least 8 characters',
+                  }
+                })}
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Password"
               />
@@ -72,7 +92,7 @@ const Login = () => {
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
               ) : null}
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? 'Signing up...' : 'Sign up'}
             </button>
           </div>
         </form>
@@ -87,4 +107,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;

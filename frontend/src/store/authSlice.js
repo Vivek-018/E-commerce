@@ -1,73 +1,71 @@
-// authSlice.js
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import authService from "../Services/authService";
 
-const initialState = {
-  status: false,
-  userData: null,
-  error: null,
-};
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { account } from '../Services/appwrite';
 
-export const loginUser = createAsyncThunk(
-  "auth/loginUser",
-  async ({ email, password }, { rejectWithValue }) => {
-    try {
-      const response = await authService.login(email, password);
-      return response; // Return the user data on success
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  }
-);
-
-export const logoutUser = createAsyncThunk(
-  "auth/logoutUser",
-  async (_, { rejectWithValue }) => {
-    try {
-      await authService.logout("current");
-      return true;
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  }
-);
-
-const authSlice = createSlice({
-  name: "auth",
-  initialState,
-  reducers: {
-    login: (state, action) => {
-      state.status = true;
-      state.userData = action.payload.userData;
-    },
-    logout: (state) => {
-      state.status = false;
-      state.userData = null;
-    },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(loginUser.fulfilled, (state, action) => {
-        state.status = true;
-        state.userData = action.payload;
-        state.error = null;
-      })
-      .addCase(loginUser.rejected, (state, action) => {
-        state.status = false;
-        state.userData = null;
-        state.error = action.payload;
-      })
-      .addCase(logoutUser.fulfilled, (state) => {
-        state.status = false;
-        state.userData = null;
-        state.error = null;
-      })
-      .addCase(logoutUser.rejected, (state, action) => {
-        state.error = action.payload;
-      });
-  },
+export const signup = createAsyncThunk('auth/signup', async ({ email, password, name }) => {
+  const response = await account.create('unique()', email, password, name);
+  await account.createEmailPasswordSession(email, password);
+  return response;
 });
 
-export const { login, logout } = authSlice.actions;
+export const login = createAsyncThunk('auth/login', async ({ email, password }) => {
+  const session = await account.createEmailPasswordSession(email, password);
+  return session;
+});
+
+export const logout = createAsyncThunk('auth/logout', async () => {
+  await account.deleteSession('current');
+});
+
+export const fetchUser = createAsyncThunk('auth/fetchUser', async () => {
+  const user = await account.get();
+  return user;
+});
+
+const authSlice = createSlice({
+  name: 'auth',
+  initialState: {
+    user: null,
+    isAuthenticated: false,
+    loading: false,
+    error: null,
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(signup.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.isAuthenticated = true;
+        state.loading = false;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.isAuthenticated = true;
+        state.loading = false;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.user = null;
+        state.isAuthenticated = false;
+      })
+      .addCase(fetchUser.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.isAuthenticated = true;
+        state.loading = false;
+      })
+      .addMatcher(
+        (action) => action.type.endsWith('/pending'),
+        (state) => {
+          state.loading = true;
+          state.error = null;
+        }
+      )
+      .addMatcher(
+        (action) => action.type.endsWith('/rejected'),
+        (state, action) => {
+          state.loading = false;
+          state.error = action.error.message;
+        }
+      );
+  },
+});
 
 export default authSlice.reducer;

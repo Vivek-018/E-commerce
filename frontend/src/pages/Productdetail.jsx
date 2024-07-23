@@ -11,3 +11,4 @@ function Productdetail() {
 }
 
 export default Productdetail;
+
