@@ -1,7 +1,8 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { logout } from '../../store/authSlice'; // Adjust the import path as needed
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../../store/authSlice"; // Adjust the import path as needed
+import SearchBtn from "../SearchBtn";
 
 const Header = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -10,7 +11,7 @@ const Header = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/');
+    navigate("/");
   };
 
   return (
@@ -18,19 +19,39 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-4">
           <div className="flex items-center">
-            <Link to="/" className="text-xl font-bold">E-Commerce</Link>
+            <Link to="/" className="text-xl font-bold">
+              E-Commerce
+            </Link>
           </div>
+
+          <SearchBtn/>
           <nav>
             <ul className="flex space-x-4">
-              <li><Link to="/" className="hover:text-gray-300">Home</Link></li>
-              <li><Link to="/product" className="hover:text-gray-300">Products</Link></li>
-              <li><Link to="/about" className="hover:text-gray-300">About</Link></li>
-              <li><Link to="/contact" className="hover:text-gray-300">Contact</Link></li>
+              <li>
+                <Link to="/" className="hover:text-gray-300">
+                  Home
+                </Link>
+              </li>
+
+              <li>
+                <Link to="/about" className="hover:text-gray-300">
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="hover:text-gray-300">
+                  Contact
+                </Link>
+              </li>
               {isAuthenticated ? (
                 <>
-                  <li><Link to="/dashboard" className="hover:text-gray-300">Dashboard</Link></li>
                   <li>
-                    <button 
+                    <Link to="/dashboard" className="hover:text-gray-300">
+                      Dashboard
+                    </Link>
+                  </li>
+                  <li>
+                    <button
                       onClick={handleLogout}
                       className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
                     >
@@ -41,16 +62,16 @@ const Header = () => {
               ) : (
                 <>
                   <li>
-                    <Link 
-                      to="/login" 
+                    <Link
+                      to="/login"
                       className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
                     >
                       Login
                     </Link>
                   </li>
                   <li>
-                    <Link 
-                      to="/signup" 
+                    <Link
+                      to="/signup"
                       className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
                     >
                       Sign Up

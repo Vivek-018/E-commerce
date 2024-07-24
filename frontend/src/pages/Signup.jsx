@@ -2,14 +2,23 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { signup } from '../store/authSlice';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const Signup = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { loading, error } = useSelector((state) => state.auth);
 
-  const onSubmit = (data) => {
-    dispatch(signup(data));
+  const onSubmit = async (data) => {
+    try {
+      await dispatch(signup(data)).unwrap();
+      toast.success('Signup successful!');
+      navigate('/dashboard');
+    } catch (error) {
+      toast.error(error.message || 'Signup failed. Please try again.');
+    }
   };
 
   return (
