@@ -76,3 +76,37 @@ docker-compose.override.yml
 .DS_Store
 
 # Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Optional, for MacOS users to speed up builds
+# Reference: https://github.com/facebook/react-native/issues/28231
+*.xcworkspace
+
+# Optional, for MacOS users to improve performance
+# Reference: https://github.com/facebook/react-native/issues/27277
+node_modules/**/*.bin
+
+# Optional, for MacOS users who often run into 'EEXIST: file already exists' errors
+# Reference: https://github.com/facebook/react-native/issues/26744
+node_modules/.bin
+
+# Optional, for Windows users to prevent 'EMFILE: too many open files' errors
+# Reference: https://github.com/facebook/react-native/issues/26142
+node_modules/.bin
+
+# Appwrite specific
+build/
+functions/node_modules/
+functions/**/*.env
+
+# React.js specific
+build/
+public/static/
+
+# Storybook
+storybook-static/
+
+# Other
+dist/

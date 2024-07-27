@@ -27,7 +27,7 @@ export const fetchUser = createAsyncThunk("auth/fetchUser", async () => {
   return user;
 });
 
-const authSlice = createSlice({
+export const authSlice = createSlice({
   name: "auth",
   initialState: {
     user: null,
@@ -38,10 +38,25 @@ const authSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      // Signup cases
+      .addCase(signup.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(signup.fulfilled, (state, action) => {
         state.user = action.payload;
         state.isAuthenticated = true;
         state.loading = false;
+        state.error = null;
+      })
+      .addCase(signup.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+      // Login cases
+      .addCase(login.pending, (state) => {
+        state.loading = true;
         state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
@@ -50,29 +65,40 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = null;
       })
+      .addCase(login.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+      // Logout case
+      .addCase(logout.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
         state.isAuthenticated = false;
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(logout.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // FetchUser cases
+      .addCase(fetchUser.pending, (state) => {
+        // Don't set loading to true for fetchUser
+        state.error = null;
       })
       .addCase(fetchUser.fulfilled, (state, action) => {
         state.user = action.payload;
         state.isAuthenticated = true;
         state.loading = false;
       })
-      .addMatcher(
-        (action) => action.type.endsWith("/pending"),
-        (state) => {
-          state.loading = true;
-          state.error = null;
-        }
-      )
-      .addMatcher(
-        (action) => action.type.endsWith("/rejected"),
-        (state, action) => {
-          state.loading = false;
-          state.error = action.error.message;
-        }
-      );
+      .addCase(fetchUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
   },
 });
 

@@ -6,4 +6,17 @@ import Profile from "./UserDashboard/Profile";
 import Settings from "./UserDashboard/Settings";
 import ProductCard from "./ProductCard";
 
-export { Header, Orders, Overview, Profile, Settings, ProductCard };
+// admin component
+import AdminProducts from "./Admin/AdminProducts";
+import AddProductForm from "./Admin/AddProductForm";
+
+export {
+  Header,
+  Orders,
+  Overview,
+  Profile,
+  Settings,
+  ProductCard,
+  AdminProducts,
+  AddProductForm,
+};

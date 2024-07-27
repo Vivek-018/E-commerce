@@ -17,15 +17,16 @@ import Signup from "./pages/Signup.jsx";
 
 import Dashboard from "./pages/Dashboard.jsx";
 import {
+  AddProductForm,
+  AdminProducts,
   Orders,
- 
   Overview,
   Profile,
   Settings,
-
 } from "./components/index.js";
 
 import { fetchUser } from "./store/authSlice.js";
+import Cart from "./components/Cart.jsx";
 
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -57,7 +58,10 @@ const router = createBrowserRouter([
         path: "about",
         element: <About />,
       },
-
+      {
+        path: "cart",
+        element: <Cart />,
+      },
       {
         path: "dashboard",
         element: (
@@ -83,6 +87,14 @@ const router = createBrowserRouter([
             element: <Settings />,
           },
         ],
+      },
+      {
+        path: "admin/add-product",
+        element: <AddProductForm />,
+      },
+      {
+        path: "admin/manage-products",
+        element: <AdminProducts />,
       },
     ],
   },
