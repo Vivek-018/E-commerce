@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { account } from "../Services/appwrite";
+import conf from "../conf/conf";
 
 export const signup = createAsyncThunk(
   "auth/signup",
@@ -23,8 +24,17 @@ export const logout = createAsyncThunk("auth/logout", async () => {
 });
 
 export const fetchUser = createAsyncThunk("auth/fetchUser", async () => {
-  const user = await account.get();
-  return user;
+  try {
+    const user = await account.get();
+    const isAdmin = user.$id === conf.adminUserId;
+    // console.log(user);
+    // console.log(user.$id);
+    // console.log(conf.adminUserId);
+    // console.log(isAdmin);
+    return { ...user, isAdmin };
+  } catch (error) {
+    throw new Error(error.message);
+  }
 });
 
 export const authSlice = createSlice({
@@ -32,72 +42,29 @@ export const authSlice = createSlice({
   initialState: {
     user: null,
     isAuthenticated: false,
-    loading: false,
+    isLoading: true, // Start with loading state
     error: null,
   },
-  reducers: {},
+  reducers: {
+    logout(state) {
+      state.user = null;
+      state.isAuthenticated = false;
+      state.isLoading = false; // Set loading to false on logout
+    },
+  },
   extraReducers: (builder) => {
     builder
-      // Signup cases
-      .addCase(signup.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(signup.fulfilled, (state, action) => {
-        state.user = action.payload;
-        state.isAuthenticated = true;
-        state.loading = false;
-        state.error = null;
-      })
-      .addCase(signup.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      })
-
-      // Login cases
-      .addCase(login.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(login.fulfilled, (state, action) => {
-        state.user = action.payload.user;
-        state.isAuthenticated = true;
-        state.loading = false;
-        state.error = null;
-      })
-      .addCase(login.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      })
-
-      // Logout case
-      .addCase(logout.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(logout.fulfilled, (state) => {
-        state.user = null;
-        state.isAuthenticated = false;
-        state.loading = false;
-        state.error = null;
-      })
-      .addCase(logout.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-
-      // FetchUser cases
       .addCase(fetchUser.pending, (state) => {
-        // Don't set loading to true for fetchUser
-        state.error = null;
+        state.isLoading = true; // Set loading to true while fetching
       })
       .addCase(fetchUser.fulfilled, (state, action) => {
         state.user = action.payload;
         state.isAuthenticated = true;
-        state.loading = false;
+        state.isLoading = false; // Set loading to false when fetching is complete
       })
       .addCase(fetchUser.rejected, (state, action) => {
-        state.loading = false;
         state.error = action.error.message;
+        state.isLoading = false; // Set loading to false on error
       });
   },
 });

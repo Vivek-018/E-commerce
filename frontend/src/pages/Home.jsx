@@ -79,13 +79,71 @@
 // export default Home;
 
 // Update home component to use custome hook
+// import React from "react";
+// import { Link } from "react-router-dom";
+// import useFetchProducts from "../Hooks/fetchProductshook";
+// import ProductCard from "../components/ProductCard";
+
+// const Home = () => {
+//   const { products = [],  } = useFetchProducts();
+
+//   return (
+//     <div className="container mx-auto px-4 py-8">
+//       {/* Hero Section */}
+//       <section className="bg-gray-100 rounded-lg p-8 mb-12">
+//         <h1 className="text-4xl font-bold mb-4">Welcome to Our Store</h1>
+//         <p className="text-xl mb-6">
+//           Discover amazing products at great prices!
+//         </p>
+//         <Link
+//           to="/products"
+//           className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition-colors"
+//         >
+//           Shop Now
+//         </Link>
+//       </section>
+
+//       {/* Featured Products */}
+//       <section className="mb-12">
+//         <h2 className="text-2xl font-semibold mb-6">Featured Products</h2>
+//         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+//           {products.length > 0 ? (
+//             products.map((product) => (
+//               <ProductCard key={product.$id} product={product} />
+//             ))
+//           ) : (
+//             <p>No featured products available.</p>
+//           )}
+//         </div>
+//       </section>
+
+//       {/* All Products */}
+//       <section>
+//         <h2 className="text-2xl font-semibold mb-6">All Products</h2>
+//         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+//           {products.length > 0 ? (
+//             products.map((product) => (
+//               <ProductCard key={product.$id} product={product} />
+//             ))
+//           ) : (
+//             <p>No products available.</p>
+//           )}
+//         </div>
+//       </section>
+//     </div>
+//   );
+// };
+
+// export default Home;
+
+// last upldate fix
 import React from "react";
 import { Link } from "react-router-dom";
 import useFetchProducts from "../Hooks/fetchProductshook";
 import ProductCard from "../components/ProductCard";
 
 const Home = () => {
-  const { products = [],  } = useFetchProducts();
+  const { products = [], error } = useFetchProducts();
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -130,6 +188,13 @@ const Home = () => {
           )}
         </div>
       </section>
+
+      {/* Error Handling */}
+      {error && (
+        <div className="text-red-500 mt-4">
+          <p>Error fetching products: {error}</p>
+        </div>
+      )}
     </div>
   );
 };

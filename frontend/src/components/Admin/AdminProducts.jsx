@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Client, Databases } from "appwrite";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 import conf from "../../conf/conf";
 
 const AdminProducts = () => {
+  const { user } = useSelector((state) => state.auth);
   const [products, setProducts] = useState([]);
+
+  if (!user || !user.isAdmin) {
+    return <p>You do not have permission to access this page.</p>;
+  }
 
   const client = new Client()
     .setEndpoint(conf.appwriteUrl) // Your Appwrite Endpoint
@@ -27,8 +33,8 @@ const AdminProducts = () => {
   const deleteProduct = async (productId) => {
     try {
       await databases.deleteDocument(
-        "YOUR_DATABASE_ID",
-        "YOUR_COLLECTION_ID",
+        conf.appwriteDatabaseId,
+        conf.appwriteProductCollectionId,
         productId
       );
       toast.success("Product deleted successfully");

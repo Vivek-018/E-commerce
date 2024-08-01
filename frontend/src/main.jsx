@@ -27,12 +27,116 @@ import {
 
 import { fetchUser } from "./store/authSlice.js";
 import Cart from "./components/Cart.jsx";
+import Unauthorized from "./components/Unauthorized.jsx";
+import AdminRoute from "./components/Admin/AdminRoute.jsx";
 
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
 
+// const router = createBrowserRouter([
+//   {
+//     path: "/",
+//     element: <App />,
+//     children: [
+//       {
+//         path: "/",
+//         element: <Home />,
+//       },
+//       {
+//         path: "login",
+//         element: <Login />,
+//       },
+//       {
+//         path: "signup",
+//         element: <Signup />,
+//       },
+//       {
+//         path: "contact",
+//         element: <Contact />,
+//       },
+//       {
+//         path: "about",
+//         element: <About />,
+//       },
+//       {
+//         path: "cart",
+//         element: <Cart />,
+//       },
+//       {
+//         path: "dashboard",
+//         element: (
+//           <ProtectedRoute>
+//             <Dashboard />
+//           </ProtectedRoute>
+//         ),
+//         children: [
+//           {
+//             path: "overview",
+//             element: <Overview />,
+//           },
+//           {
+//             path: "orders",
+//             element: <Orders />,
+//           },
+//           {
+//             path: "profile",
+//             element: <Profile />,
+//           },
+//           {
+//             path: "settings",
+//             element: <Settings />,
+//           },
+//         ],
+//       },
+//       {
+//         path: "admin/add-product",
+//         element: (
+//           <AdminRoute>
+//             <AddProductForm />
+//           </AdminRoute>
+//         ),
+//       },
+//       {
+//         path: "admin/manage-products",
+//         element: (
+//           <AdminRoute>
+//             <AdminProducts />
+//           </AdminRoute>
+//         ),
+//       },
+//       {
+//         path: "unauthorized",
+//         element: <Unauthorized />,
+//       },
+//     ],
+//   },
+// ]);
+
+// const AppContent = () => {
+//   const dispatch = useDispatch();
+
+//   useEffect(() => {
+//     dispatch(fetchUser());
+//   }, [dispatch]);
+
+//   return <RouterProvider router={router} />;
+// };
+
+// const Root = () => {
+//   return (
+//     <React.StrictMode>
+//       <Provider store={store}>
+//         <AppContent />
+//       </Provider>
+//     </React.StrictMode>
+//   );
+// };
+
+// ReactDOM.createRoot(document.getElementById("root")).render(<Root />);
+
+// code by chat gpt
 const router = createBrowserRouter([
   {
     path: "/",
@@ -90,15 +194,28 @@ const router = createBrowserRouter([
       },
       {
         path: "admin/add-product",
-        element: <AddProductForm />,
+        element: (
+          <AdminRoute>
+            <AddProductForm />
+          </AdminRoute>
+        ),
       },
       {
         path: "admin/manage-products",
-        element: <AdminProducts />,
+        element: (
+          <AdminRoute>
+            <AdminProducts />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "unauthorized",
+        element: <Unauthorized />,
       },
     ],
   },
 ]);
+
 
 const AppContent = () => {
   const dispatch = useDispatch();
