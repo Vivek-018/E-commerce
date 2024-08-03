@@ -29,6 +29,7 @@ import { fetchUser } from "./store/authSlice.js";
 import Cart from "./components/Cart.jsx";
 import Unauthorized from "./components/Unauthorized.jsx";
 import AdminRoute from "./components/Admin/AdminRoute.jsx";
+import Checkout from "./components/Checkout.jsx";
 
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -167,6 +168,10 @@ const router = createBrowserRouter([
         element: <Cart />,
       },
       {
+        path: "checkout",
+        element: <Checkout />,
+      },
+      {
         path: "dashboard",
         element: (
           <ProtectedRoute>
@@ -215,7 +220,6 @@ const router = createBrowserRouter([
     ],
   },
 ]);
-
 
 const AppContent = () => {
   const dispatch = useDispatch();

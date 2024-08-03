@@ -9,5 +9,8 @@ const conf = {
   appwriteCartCollectionId: String(
     import.meta.env.VITE_APPWRITE_CART_COLLECTION_ID
   ),
+  appwriteOrderCollectionId: String(
+    import.meta.env.VITE_APPWRITE_ORDER_COLLECTION_ID
+  ),
 };
 export default conf;
